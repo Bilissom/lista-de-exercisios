@@ -1,0 +1,175 @@
+using System;
+
+class Program
+{
+    static void MostrarMenu()
+    {
+        Console.WriteLine("\n=== MENU ===");
+        Console.WriteLine("1 - Soma dos elementos do vetor");
+        Console.WriteLine("2 - Média dos elementos do vetor");
+        Console.WriteLine("3 - Maior e menor elemento do vetor");
+        Console.WriteLine("4 - Normalização do vetor");
+        Console.WriteLine("5 - Matriz transposta");
+        Console.WriteLine("6 - Multiplicação de matrizes");
+        Console.WriteLine("7 - Verificar se a matriz é simétrica");
+        Console.WriteLine("8 - Sair");
+        Console.Write("Escolha uma opção: ");
+    }
+
+    static int SomarElementos(int[] vetor)
+    {
+        int soma = 0;
+        foreach (int num in vetor)
+            soma += num;
+        return soma;
+    }
+
+    static double CalcularMedia(int[] vetor)
+    {
+        return (double)SomarElementos(vetor) / vetor.Length;
+    }
+
+    static void EncontrarMaiorMenor(int[] vetor, out int maior, out int menor)
+    {
+        maior = vetor[0];
+        menor = vetor[0];
+
+        foreach (int num in vetor)
+        {
+            if (num > maior) maior = num;
+            if (num < menor) menor = num;
+        }
+    }
+
+    static double[] NormalizarVetor(int[] vetor)
+    {
+        EncontrarMaiorMenor(vetor, out int maior, out int menor);
+        double[] normalizado = new double[vetor.Length];
+
+        for (int i = 0; i < vetor.Length; i++)
+            normalizado[i] = (double)(vetor[i] - menor) / (maior - menor);
+
+        return normalizado;
+    }
+
+    static int[,] GerarTransposta(int[,] matriz)
+    {
+        int tamanho = matriz.GetLength(0);
+        int[,] transposta = new int[tamanho, tamanho];
+
+        for (int i = 0; i < tamanho; i++)
+            for (int j = 0; j < tamanho; j++)
+                transposta[j, i] = matriz[i, j];
+
+        return transposta;
+    }
+
+    static int[,] MultiplicarMatrizes(int[,] matrizA, int[,] matrizB)
+    {
+        int tamanho = matrizA.GetLength(0);
+        int[,] resultado = new int[tamanho, tamanho];
+
+        for (int i = 0; i < tamanho; i++)
+            for (int j = 0; j < tamanho; j++)
+                for (int k = 0; k < tamanho; k++)
+                    resultado[i, j] += matrizA[i, k] * matrizB[k, j];
+
+        return resultado;
+    }
+
+    static bool EhSimetrica(int[,] matriz)
+    {
+        int tamanho = matriz.GetLength(0);
+        for (int i = 0; i < tamanho; i++)
+            for (int j = 0; j < tamanho; j++)
+                if (matriz[i, j] != matriz[j, i])
+                    return false;
+
+        return true;
+    }
+
+    static void Main()
+    {
+        Console.Write("Quantos elementos o vetor terá? ");
+        int n = int.Parse(Console.ReadLine());
+        int[] vetor = new int[n];
+
+        for (int i = 0; i < n; i++)
+        {
+            Console.Write($"Digite o elemento {i + 1}: ");
+            vetor[i] = int.Parse(Console.ReadLine());
+        }
+
+        int[,] matriz = new int[3, 3];
+        int[,] matrizB = new int[3, 3];
+
+        Console.WriteLine("\nDigite os valores da matriz 3x3:");
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++)
+            {
+                Console.Write($"Elemento [{i},{j}]: ");
+                matriz[i, j] = int.Parse(Console.ReadLine());
+            }
+
+        int opcao = 0;
+        while (opcao != 8)
+        {
+            MostrarMenu();
+            opcao = int.Parse(Console.ReadLine());
+
+            if (opcao == 1)
+                Console.WriteLine($"Soma dos elementos: {SomarElementos(vetor)}");
+            else if (opcao == 2)
+                Console.WriteLine($"Média dos elementos: {CalcularMedia(vetor)}");
+            else if (opcao == 3)
+            {
+                EncontrarMaiorMenor(vetor, out int maior, out int menor);
+                Console.WriteLine($"Maior valor: {maior}, Menor valor: {menor}");
+            }
+            else if (opcao == 4)
+            {
+                double[] vetorNormalizado = NormalizarVetor(vetor);
+                Console.WriteLine("Vetor normalizado:");
+                foreach (double num in vetorNormalizado)
+                    Console.WriteLine(num);
+            }
+            else if (opcao == 5)
+            {
+                int[,] transposta = GerarTransposta(matriz);
+                Console.WriteLine("Matriz Transposta:");
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 3; j++)
+                        Console.Write(transposta[i, j] + " ");
+                    Console.WriteLine();
+                }
+            }
+            else if (opcao == 6)
+            {
+                Console.WriteLine("\nDigite os valores da segunda matriz 3x3:");
+                for (int i = 0; i < 3; i++)
+                    for (int j = 0; j < 3; j++)
+                    {
+                        Console.Write($"B[{i},{j}]: ");
+                        matrizB[i, j] = int.Parse(Console.ReadLine());
+                    }
+
+                int[,] resultadoMultiplicacao = MultiplicarMatrizes(matriz, matrizB);
+                Console.WriteLine("Resultado da multiplicação:");
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 3; j++)
+                        Console.Write(resultadoMultiplicacao[i, j] + " ");
+                    Console.WriteLine();
+                }
+            }
+            else if (opcao == 7)
+                Console.WriteLine($"A matriz informada é simétrica? {EhSimetrica(matriz)}");
+            else if (opcao != 8)
+                Console.WriteLine("Opção inválida, tente novamente.");
+        }
+
+        Console.WriteLine("Saindo do programa...");
+        Console.ReadKey(); 
+    }
+}
